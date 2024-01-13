@@ -1,6 +1,5 @@
 import requests, os
 import json
-import base64
 
 
 class Bhashini:
@@ -132,6 +131,8 @@ class Bhashini:
         self.pipeLineData = response.json()
 
     def tts(self, text):
+        self.getTTSPipeLine()
+
         if not self.pipeLineData:
             raise "Pipe Line data is not available"
 
@@ -183,10 +184,4 @@ class Bhashini:
         if response.status_code != 200:
             raise "TTS Callback failed!"
 
-        b4audio = response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
-        decodedData = base64.b64decode(b4audio)
-        wav_file = "/tmp/tts.wav"
-        with open(wav_file, "wb") as wavFh:
-            wavFh.write(decodedData)
-
-        return wav_file
+        return response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
