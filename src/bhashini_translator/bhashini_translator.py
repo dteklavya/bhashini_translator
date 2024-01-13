@@ -78,7 +78,6 @@ class Bhashini:
             "Authorization": inferenceApiKey,
             "Content-Type": "application/json",
         }
-        inputArrayOfDicts = [{"source": i} for i in text.split()]
         requestPayload = json.dumps(
             {
                 "pipelineTasks": [
@@ -93,14 +92,14 @@ class Bhashini:
                         },
                     },
                 ],
-                "inputData": {"input": inputArrayOfDicts},
+                "inputData": {"input": [{"source": text}]},
             }
         )
         try:
             response = requests.post(callbackUrl, data=requestPayload, headers=headers)
         except Exception as e:
             raise e
-        return response.json().get("pipelineResponse")[0]["output"]
+        return response.json().get("pipelineResponse")[0]["output"][0]["target"]
 
     def getTTSPipeLine(self) -> None:
         ulcaEndPoint = (
