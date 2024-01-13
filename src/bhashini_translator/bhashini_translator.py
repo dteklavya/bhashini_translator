@@ -1,9 +1,10 @@
 import requests, os
 import json
 from .config import ulcaEndPoint
+from .payloads import Payloads
 
 
-class Bhashini:
+class Bhashini(Payloads):
     ulcaUserId: str
     ulcaApiKey: str
     sourceLanguage: str
@@ -21,24 +22,7 @@ class Bhashini:
         self.targetLanguage = targetLanguage
 
     def getTranslatorPipeLine(self) -> None:
-        requestPayload = json.dumps(
-            {
-                "pipelineTasks": [
-                    {
-                        "taskType": "translation",
-                        "config": {
-                            "language": {
-                                "sourceLanguage": self.sourceLanguage,
-                                "targetLanguage": self.targetLanguage,
-                            },
-                        },
-                    },
-                ],
-                "pipelineRequestConfig": {
-                    "pipelineId": self.pipeLineId,
-                },
-            }
-        )
+        requestPayload = self.nmt_payload()
         response = requests.post(
             ulcaEndPoint,
             data=requestPayload,
