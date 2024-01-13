@@ -1,5 +1,6 @@
 import requests, os
 import json
+from .config import ulcaEndPoint
 
 
 class Bhashini:
@@ -20,9 +21,6 @@ class Bhashini:
         self.targetLanguage = targetLanguage
 
     def getTranslatorPipeLine(self) -> None:
-        ulcaEndPoint = (
-            "https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline"
-        )
         requestPayload = json.dumps(
             {
                 "pipelineTasks": [
@@ -101,9 +99,6 @@ class Bhashini:
         return response.json().get("pipelineResponse")[0]["output"][0]["target"]
 
     def getTTSPipeLine(self) -> None:
-        ulcaEndPoint = (
-            "https://meity-auth.ulcacontrib.org/ulca/apis/v0/model/getModelsPipeline"
-        )
         requestPayload = json.dumps(
             {
                 "pipelineTasks": [
