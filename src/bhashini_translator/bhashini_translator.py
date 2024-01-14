@@ -83,19 +83,7 @@ class Bhashini(Payloads):
         return response.json().get("pipelineResponse")[0]["output"][0]["target"]
 
     def getTTSPipeLine(self) -> None:
-        requestPayload = json.dumps(
-            {
-                "pipelineTasks": [
-                    {
-                        "taskType": "tts",
-                        "config": {"language": {"sourceLanguage": self.sourceLanguage}},
-                    },
-                ],
-                "pipelineRequestConfig": {
-                    "pipelineId": self.pipeLineId,
-                },
-            }
-        )
+        requestPayload = self.tts_payload()
         headers = {
             "ulcaApiKey": self.ulcaApiKey,
             "userID": self.ulcaUserId,

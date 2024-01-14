@@ -9,13 +9,13 @@ class PipelineConfig:
                         "targetLanguage": self.targetLanguage,
                     },
                 },
-            }
+            },
+            "tts": {
+                "taskType": "tts",
+                "config": {"language": {"sourceLanguage": self.sourceLanguage}},
+            },
         }
         try:
             return taskTypeConfig[taskType]
         except KeyError:
             raise "Invalid task type."
-
-    def getPipeLineConfig(self, taskType):
-        if taskType == "translation":
-            return self.getTaskTypeConfig(taskType)

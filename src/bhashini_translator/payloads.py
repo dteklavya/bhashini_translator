@@ -7,8 +7,18 @@ class Payloads(PipelineConfig):
         return json.dumps(
             {
                 "pipelineTasks": [
-                    self.getPipeLineConfig("translation"),
+                    self.getTaskTypeConfig("translation"),
                 ],
+                "pipelineRequestConfig": {
+                    "pipelineId": self.pipeLineId,
+                },
+            }
+        )
+
+    def tts_payload(self) -> json:
+        return json.dumps(
+            {
+                "pipelineTasks": [self.getTaskTypeConfig("tts")],
                 "pipelineRequestConfig": {
                     "pipelineId": self.pipeLineId,
                 },
