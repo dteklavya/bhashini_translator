@@ -1,3 +1,7 @@
+import requests
+import json
+
+
 class PipelineConfig:
     def getTaskTypeConfig(self, taskType):
         taskTypeConfig = {
@@ -14,8 +18,45 @@ class PipelineConfig:
                 "taskType": "tts",
                 "config": {"language": {"sourceLanguage": self.sourceLanguage}},
             },
+            "asr": {
+                "taskType": "asr",
+                "config": {"language": {"sourceLanguage": self.sourceLanguage}},
+            },
         }
         try:
             return taskTypeConfig[taskType]
         except KeyError:
             raise "Invalid task type."
+
+    def getPipeLineConfig(self, taskType):
+        taskTypeConfig = self.getTaskTypeConfig(taskType)
+        payload = json.dumps(
+            {
+                "pipelineTasks": [taskTypeConfig],
+                "pipelineRequestConfig": {
+                    "pipelineId": self.pipeLineId,
+                },
+            }
+        )
+        response = requests.post(
+            self.ulcaEndPoint,
+            data=payload,
+            headers={
+                "ulcaApiKey": self.ulcaApiKey,
+                "userID": self.ulcaUserId,
+                "Content-Type": "application/json",
+            },
+        )
+
+        if response.status_code != 200:
+            raise ValueError("Something went wrong!")
+
+        serviceId = (
+            response.json()["pipelineResponseConfig"][0]
+            .get("config")[0]
+            .get("serviceId")
+        )
+        taskTypeConfig["serviceId"] = serviceId
+        self.pipeLineData = response.json()
+
+        return taskTypeConfig

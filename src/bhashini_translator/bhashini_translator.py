@@ -11,11 +11,13 @@ class Bhashini(Payloads):
     targetLanguage: str
     pipeLineData: dict
     pipeLineId: str
+    ulcaEndPoint: str
 
     def __init__(self, sourceLanguage=None, targetLanguage=None) -> None:
         self.ulcaUserId = os.environ.get("userID")
         self.ulcaApiKey = os.environ.get("ulcaApiKey")
         self.pipeLineId = os.environ.get("DefaultPipeLineId")
+        self.ulcaEndPoint = ulcaEndPoint
         if not self.ulcaUserId or not self.ulcaApiKey:
             raise ("Invalid Credentials!")
         self.sourceLanguage = sourceLanguage
@@ -97,7 +99,7 @@ class Bhashini(Payloads):
 
         self.pipeLineData = response.json()
 
-    def tts(self, text):
+    def tts(self, text) -> str:
         self.getTTSPipeLine()
 
         if not self.pipeLineData:
@@ -152,3 +154,36 @@ class Bhashini(Payloads):
             raise "TTS Callback failed!"
 
         return response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
+
+    def asr_nmt(self, base64String: str) -> json:
+        """Automatic Speech recongnition, translation and conversion to text."""
+        """Multi-lingual speech to text conversion happens here."""
+        requestPayload = self.asr_nmt_payload(base64String)
+
+        if not self.pipeLineData:
+            raise "Pipe Line data is not available"
+
+        callbackUrl = self.pipeLineData.get("pipelineInferenceAPIEndPoint").get(
+            "callbackUrl"
+        )
+
+        inferenceApiKey = (
+            self.pipeLineData.get("pipelineInferenceAPIEndPoint")
+            .get("inferenceApiKey")
+            .get("value")
+        )
+
+        headers = {
+            "Authorization": inferenceApiKey,
+            "Content-Type": "application/json",
+        }
+        response = requests.post(
+            callbackUrl,
+            data=requestPayload,
+            headers=headers,
+        )
+
+        if response.status_code != 200:
+            raise ValueError("Something went wrong!")
+
+        return response.json().get("pipelineResponse")[1].get("output")[0].get("target")
