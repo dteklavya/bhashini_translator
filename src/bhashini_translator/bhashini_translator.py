@@ -70,23 +70,8 @@ class Bhashini(Payloads):
             raise e
         return response.json().get("pipelineResponse")[0]["output"][0]["target"]
 
-    def getTTSPipeLine(self) -> None:
-        requestPayload = self.tts_payload()
-        headers = {
-            "ulcaApiKey": self.ulcaApiKey,
-            "userID": self.ulcaUserId,
-            "Content-Type": "application/json",
-        }
-        response = requests.post(
-            ulcaEndPoint,
-            data=requestPayload,
-            headers=headers,
-        )
-
-        self.pipeLineData = response.json()
-
     def tts(self, text) -> str:
-        self.getTTSPipeLine()
+        self.tts_payload()
 
         if not self.pipeLineData:
             raise "Pipe Line data is not available"

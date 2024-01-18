@@ -18,7 +18,7 @@ class Payloads(PipelineConfig):
     def tts_payload(self) -> json:
         return json.dumps(
             {
-                "pipelineTasks": [self.getTaskTypeConfig("tts")],
+                "pipelineTasks": [self.getPipeLineConfig("tts")],
                 "pipelineRequestConfig": {
                     "pipelineId": self.pipeLineId,
                 },
