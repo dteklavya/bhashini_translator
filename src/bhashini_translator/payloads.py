@@ -7,7 +7,7 @@ class Payloads(PipelineConfig):
         return json.dumps(
             {
                 "pipelineTasks": [
-                    self.getTaskTypeConfig("translation"),
+                    self.getPipeLineConfig("translation"),
                 ],
                 "pipelineRequestConfig": {
                     "pipelineId": self.pipeLineId,

@@ -23,22 +23,8 @@ class Bhashini(Payloads):
         self.sourceLanguage = sourceLanguage
         self.targetLanguage = targetLanguage
 
-    def getTranslatorPipeLine(self) -> None:
-        requestPayload = self.nmt_payload()
-        response = requests.post(
-            ulcaEndPoint,
-            data=requestPayload,
-            headers={
-                "ulcaApiKey": self.ulcaApiKey,
-                "userID": self.ulcaUserId,
-                "Content-Type": "application/json",
-            },
-        )
-
-        self.pipeLineData = response.json()
-
     def translate(self, text) -> json:
-        self.getTranslatorPipeLine()
+        self.nmt_payload()
 
         if not self.pipeLineData:
             raise "Pipe Line data is not available"
