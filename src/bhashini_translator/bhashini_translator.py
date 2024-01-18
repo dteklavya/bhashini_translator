@@ -24,7 +24,7 @@ class Bhashini(Payloads):
         self.targetLanguage = targetLanguage
 
     def translate(self, text) -> json:
-        self.nmt_payload()
+        requestPayload = self.nmt_payload(text)
 
         if not self.pipeLineData:
             raise "Pipe Line data is not available"
@@ -47,23 +47,6 @@ class Bhashini(Payloads):
             "Authorization": inferenceApiKey,
             "Content-Type": "application/json",
         }
-        requestPayload = json.dumps(
-            {
-                "pipelineTasks": [
-                    {
-                        "taskType": "translation",
-                        "config": {
-                            "language": {
-                                "sourceLanguage": self.sourceLanguage,
-                                "targetLanguage": self.targetLanguage,
-                            },
-                            "serviceId": serviceId,
-                        },
-                    },
-                ],
-                "inputData": {"input": [{"source": text}]},
-            }
-        )
         try:
             response = requests.post(callbackUrl, data=requestPayload, headers=headers)
         except Exception as e:

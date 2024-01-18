@@ -3,7 +3,7 @@ from .pipeline_config import PipelineConfig
 
 
 class Payloads(PipelineConfig):
-    def nmt_payload(self) -> json:
+    def nmt_payload(self, text: str) -> json:
         return json.dumps(
             {
                 "pipelineTasks": [
@@ -12,6 +12,7 @@ class Payloads(PipelineConfig):
                 "pipelineRequestConfig": {
                     "pipelineId": self.pipeLineId,
                 },
+                "inputData": {"input": [{"source": text}]},
             }
         )
 
