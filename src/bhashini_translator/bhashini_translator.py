@@ -54,7 +54,7 @@ class Bhashini(Payloads):
         return response.json().get("pipelineResponse")[0]["output"][0]["target"]
 
     def tts(self, text) -> str:
-        self.tts_payload()
+        requestPayload = self.tts_payload(text)
 
         if not self.pipeLineData:
             raise "Pipe Line data is not available"
@@ -77,27 +77,6 @@ class Bhashini(Payloads):
             "Authorization": inferenceApiKey,
             "Content-Type": "application/json",
         }
-
-        requestPayload = json.dumps(
-            {
-                "pipelineTasks": [
-                    {
-                        "taskType": "tts",
-                        "config": {
-                            "language": {
-                                "sourceLanguage": self.sourceLanguage,
-                            },
-                            "serviceId": serviceId,
-                            "gender": "female",
-                        },
-                    },
-                ],
-                "inputData": {
-                    "input": [{"source": text}],
-                    "audio": [{"audioContent": None}],
-                },
-            }
-        )
 
         try:
             response = requests.post(callbackUrl, data=requestPayload, headers=headers)

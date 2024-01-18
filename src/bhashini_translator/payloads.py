@@ -16,13 +16,14 @@ class Payloads(PipelineConfig):
             }
         )
 
-    def tts_payload(self) -> json:
+    def tts_payload(self, text: str) -> json:
         return json.dumps(
             {
                 "pipelineTasks": [self.getPipeLineConfig("tts")],
                 "pipelineRequestConfig": {
                     "pipelineId": self.pipeLineId,
                 },
+                "inputData": {"input": [{"source": text}]},
             }
         )
 

@@ -16,7 +16,10 @@ class PipelineConfig:
             },
             "tts": {
                 "taskType": "tts",
-                "config": {"language": {"sourceLanguage": self.sourceLanguage}},
+                "config": {
+                    "language": {"sourceLanguage": self.sourceLanguage},
+                    "gender": "female",
+                },
             },
             "asr": {
                 "taskType": "asr",
@@ -56,7 +59,7 @@ class PipelineConfig:
             .get("config")[0]
             .get("serviceId")
         )
-        taskTypeConfig["serviceId"] = serviceId
+        taskTypeConfig["config"]["serviceId"] = serviceId
         self.pipeLineData = response.json()
 
         return taskTypeConfig
