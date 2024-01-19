@@ -17,6 +17,8 @@ class Bhashini(Payloads):
         self.ulcaUserId = os.environ.get("userID")
         self.ulcaApiKey = os.environ.get("ulcaApiKey")
         self.pipeLineId = os.environ.get("DefaultPipeLineId")
+        if not self.pipeLineId:
+            self.pipeLineId = "64392f96daac500b55c543cd"
         self.ulcaEndPoint = ulcaEndPoint
         if not self.ulcaUserId or not self.ulcaApiKey:
             raise ValueError("Invalid Credentials!")
