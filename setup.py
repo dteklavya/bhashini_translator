@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="bhashini_translator",
-    version="0.1",
+    version="0.2",
     packages=["bhashini_translator"],
     install_requires=["requests"],
     author="Rajesh Pethe",
