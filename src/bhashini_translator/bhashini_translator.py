@@ -19,7 +19,7 @@ class Bhashini(Payloads):
         self.pipeLineId = os.environ.get("DefaultPipeLineId")
         self.ulcaEndPoint = ulcaEndPoint
         if not self.ulcaUserId or not self.ulcaApiKey:
-            raise ("Invalid Credentials!")
+            raise ValueError("Invalid Credentials!")
         self.sourceLanguage = sourceLanguage
         self.targetLanguage = targetLanguage
 
@@ -27,66 +27,25 @@ class Bhashini(Payloads):
         requestPayload = self.nmt_payload(text)
 
         if not self.pipeLineData:
-            raise "Pipe Line data is not available"
+            raise ValueError("Pipe Line data is not available")
 
-        callbackUrl = self.pipeLineData.get("pipelineInferenceAPIEndPoint").get(
-            "callbackUrl"
+        pipelineResponse = self.compute_response(requestPayload)
+        return (
+            pipelineResponse.get("pipelineResponse")[0].get("output")[0].get("target")
         )
-        inferenceApiKey = (
-            self.pipeLineData.get("pipelineInferenceAPIEndPoint")
-            .get("inferenceApiKey")
-            .get("value")
-        )
-        serviceId = (
-            self.pipeLineData.get("pipelineResponseConfig")[0]
-            .get("config")[0]
-            .get("serviceId")
-        )
-
-        headers = {
-            "Authorization": inferenceApiKey,
-            "Content-Type": "application/json",
-        }
-        try:
-            response = requests.post(callbackUrl, data=requestPayload, headers=headers)
-        except Exception as e:
-            raise e
-        return response.json().get("pipelineResponse")[0]["output"][0]["target"]
 
     def tts(self, text) -> str:
         requestPayload = self.tts_payload(text)
 
         if not self.pipeLineData:
-            raise "Pipe Line data is not available"
+            raise ValueError("Pipe Line data is not available")
 
-        callbackUrl = self.pipeLineData.get("pipelineInferenceAPIEndPoint").get(
-            "callbackUrl"
+        pipelineResponse = self.compute_response(requestPayload)
+        return (
+            pipelineResponse.get("pipelineResponse")[0]
+            .get("audio")[0]
+            .get("audioContent")
         )
-        inferenceApiKey = (
-            self.pipeLineData.get("pipelineInferenceAPIEndPoint")
-            .get("inferenceApiKey")
-            .get("value")
-        )
-        serviceId = (
-            self.pipeLineData.get("pipelineResponseConfig")[0]
-            .get("config")[0]
-            .get("serviceId")
-        )
-
-        headers = {
-            "Authorization": inferenceApiKey,
-            "Content-Type": "application/json",
-        }
-
-        try:
-            response = requests.post(callbackUrl, data=requestPayload, headers=headers)
-        except Exception as e:
-            raise e
-
-        if response.status_code != 200:
-            raise "TTS Callback failed!"
-
-        return response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
 
     def asr_nmt(self, base64String: str) -> json:
         """Automatic Speech recongnition, translation and conversion to text."""
@@ -94,29 +53,35 @@ class Bhashini(Payloads):
         requestPayload = self.asr_nmt_payload(base64String)
 
         if not self.pipeLineData:
-            raise "Pipe Line data is not available"
+            raise ValueError("Pipe Line data is not available")
+
+        pipelineResponse = self.compute_response(requestPayload)
+        return (
+            pipelineResponse.get("pipelineResponse")[1].get("output")[0].get("target")
+        )
+
+    def compute_response(self, requestPayload: json) -> json:
+        if not self.pipeLineData:
+            raise ValueError("Intitialize pipe line data first!")
 
         callbackUrl = self.pipeLineData.get("pipelineInferenceAPIEndPoint").get(
             "callbackUrl"
         )
-
         inferenceApiKey = (
             self.pipeLineData.get("pipelineInferenceAPIEndPoint")
             .get("inferenceApiKey")
             .get("value")
         )
-
         headers = {
             "Authorization": inferenceApiKey,
             "Content-Type": "application/json",
         }
-        response = requests.post(
-            callbackUrl,
-            data=requestPayload,
-            headers=headers,
-        )
+
+        try:
+            response = requests.post(callbackUrl, data=requestPayload, headers=headers)
+        except Exception as e:
+            raise e
 
         if response.status_code != 200:
-            raise ValueError("Something went wrong!")
-
-        return response.json().get("pipelineResponse")[1].get("output")[0].get("target")
+            raise ValueError("Something went wrong")
+        return response.json()

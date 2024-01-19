@@ -29,7 +29,7 @@ class PipelineConfig:
         try:
             return taskTypeConfig[taskType]
         except KeyError:
-            raise "Invalid task type."
+            raise KeyError("Invalid task type.")
 
     def getPipeLineConfig(self, taskType):
         taskTypeConfig = self.getTaskTypeConfig(taskType)
