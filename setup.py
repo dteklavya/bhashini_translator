@@ -8,7 +8,7 @@ setup(
     author="Rajesh Pethe",
     author_email="rajesh.pethe@gmail.com",
     description="Python interface to Bhashini APIs.",
-    url="https://github.com/dteklavya/bhashini-translator",
+    url="https://github.com/dteklavya/bhashini_translator",
     package_dir={"": "src"},
     python_requires=">=3.7",
 )
