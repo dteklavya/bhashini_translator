@@ -10,7 +10,7 @@ setup(
     description="Python client interface to leverage Bhashini(ULCA) APIs.",
     readme="README.md",
     long_description="Python client interface to leverage Bhashini(ULCA) APIs.",
-    long_description_content_type="text",
+    long_description_content_type="text/plain",
     url="https://github.com/dteklavya/bhashini_translator",
     package_dir={"": "src"},
     python_requires=">=3.7",
