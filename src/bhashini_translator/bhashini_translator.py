@@ -37,6 +37,10 @@ class Bhashini(Payloads):
         )
 
     def tts(self, text) -> str:
+        """
+        TTS (Text-to-Speech) - generates speech from text.
+        Generates speech from text in a specific source language.
+        """
         requestPayload = self.tts_payload(text)
 
         if not self.pipeLineData:
@@ -50,8 +54,11 @@ class Bhashini(Payloads):
         )
 
     def asr_nmt(self, base64String: str) -> json:
-        """Automatic Speech recongnition, translation and conversion to text."""
-        """Multi-lingual speech to text conversion happens here."""
+        """
+        ASR-NMT (Automatic Speech Recognition - Neural Machine Translation)
+        Automatic Speech recongnition, translation and conversion to text.
+        Performs ASR and NMT on the audio data (base64) and translates it to the target language.
+        """
         requestPayload = self.asr_nmt_payload(base64String)
 
         if not self.pipeLineData:
@@ -63,8 +70,8 @@ class Bhashini(Payloads):
         )
 
     def asr(self, base64String: str) -> json:
-        """Automatic Speech recongnition and conversion to text."""
-        """Multi-lingual speech to text conversion happens here."""
+        """Automatic Speech recognition for processing audio data."""
+        """Sends audio data (base64) to the server for speech recognition."""
         requestPayload = self.asr_payload(base64String)
 
         if not self.pipeLineData:
