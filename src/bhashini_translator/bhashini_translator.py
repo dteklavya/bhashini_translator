@@ -62,6 +62,19 @@ class Bhashini(Payloads):
             pipelineResponse.get("pipelineResponse")[1].get("output")[0].get("target")
         )
 
+    def asr(self, base64String: str) -> json:
+        """Automatic Speech recongnition and conversion to text."""
+        """Multi-lingual speech to text conversion happens here."""
+        requestPayload = self.asr_payload(base64String)
+
+        if not self.pipeLineData:
+            raise ValueError("Pipe Line data is not available")
+
+        pipelineResponse = self.compute_response(requestPayload)
+        return (
+            pipelineResponse.get("pipelineResponse")[0].get("output")[0].get("source")
+        )
+
     def compute_response(self, requestPayload: json) -> json:
         if not self.pipeLineData:
             raise ValueError("Intitialize pipe line data first!")

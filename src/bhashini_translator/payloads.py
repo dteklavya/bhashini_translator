@@ -39,3 +39,15 @@ class Payloads(PipelineConfig):
             "inputData": {"audio": [{"audioContent": base64String}]},
         }
         return json.dumps(payload)
+
+    def asr_payload(self, base64String) -> json:
+        payload = {
+            "pipelineTasks": [
+                self.getPipeLineConfig("asr"),
+            ],
+            "pipelineRequestConfig": {
+                "pipelineId": self.pipeLineId,
+            },
+            "inputData": {"audio": [{"audioContent": base64String}]},
+        }
+        return json.dumps(payload)
