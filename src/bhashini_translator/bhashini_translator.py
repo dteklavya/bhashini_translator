@@ -82,6 +82,19 @@ class Bhashini(Payloads):
             pipelineResponse.get("pipelineResponse")[0].get("output")[0].get("source")
         )
 
+    def nmt_tts(self, text: str) -> str:
+        requestPayload = self.nmt_tts_payload(text)
+
+        if not self.pipeLineData:
+            raise ValueError("Pipe Line data is not available")
+
+        pipelineResponse = self.compute_response(requestPayload)
+        return (
+            pipelineResponse.get("pipelineResponse")[1]
+            .get("audio")[0]
+            .get("audioContent")
+        )
+
     def compute_response(self, requestPayload: json) -> json:
         if not self.pipeLineData:
             raise ValueError("Intitialize pipe line data first!")
