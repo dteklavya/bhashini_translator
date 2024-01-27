@@ -95,6 +95,19 @@ class Bhashini(Payloads):
             .get("audioContent")
         )
 
+    def asr_nmt_tts(self, base64String: str) -> str:
+        requestPayload = self.asr_nmt_tts_payload(base64String)
+
+        if not self.pipeLineData:
+            raise ValueError("Pipe Line data is not available")
+
+        pipelineResponse = self.compute_response(requestPayload)
+        return (
+            pipelineResponse.get("pipelineResponse")[2]
+            .get("audio")[0]
+            .get("audioContent")
+        )
+
     def compute_response(self, requestPayload: json) -> json:
         if not self.pipeLineData:
             raise ValueError("Intitialize pipe line data first!")
