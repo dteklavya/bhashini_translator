@@ -65,3 +65,18 @@ class Payloads(PipelineConfig):
                 "inputData": {"input": [{"source": text}]},
             }
         )
+
+    def asr_nmt_tts_payload(self, base64String: str) -> json:
+        return json.dumps(
+            {
+                "pipelineTasks": [
+                    self.getPipeLineConfig("asr"),
+                    self.getPipeLineConfig("translation"),
+                    self.getPipeLineConfig("tts"),
+                ],
+                "pipelineRequestConfig": {
+                    "pipelineId": self.pipeLineId,
+                },
+                "inputData": {"audio": [{"audioContent": base64String}]},
+            }
+        )
