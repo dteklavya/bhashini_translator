@@ -1,5 +1,5 @@
 import json
-from .pipeline_config import PipelineConfig
+from bhashini_translator.pipeline_config import PipelineConfig
 
 
 class Payloads(PipelineConfig):

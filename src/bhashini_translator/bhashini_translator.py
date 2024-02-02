@@ -1,7 +1,7 @@
 import requests, os
 import json
-from .config import ulcaEndPoint
-from .payloads import Payloads
+from bhashini_translator.config import ulcaEndPoint
+from bhashini_translator.payloads import Payloads
 
 
 class Bhashini(Payloads):
