@@ -49,6 +49,32 @@ class TestTranslation(TestCase):
                 "Some text",
             )
 
+    def test_tts_payload(self):
+        bhashini = Bhashini(sourceLanguage="en", targetLanguage="hi")
+        self.assertIsNotNone(bhashini)
+
+        pl_config = {"pipelineResponseConfig": [{"config": [{"serviceId": 123}]}]}
+
+        with mock.patch("bhashini_translator.pipeline_config.requests") as mock_request:
+            mock_request.post.return_value.json.return_value = pl_config
+            mock_request.post().status_code = 200
+            json_payload = json.loads(bhashini.tts_payload("Some text"))
+            conf_payload = json_payload.get("pipelineTasks")[0].get("config")
+            tasks_payload = json_payload.get("pipelineTasks")[0]
+
+            self.assertTrue(mock_request.post.called)
+            self.assertEqual(tasks_payload.get("taskType"), "tts")
+            self.assertEqual(conf_payload.get("language").get("sourceLanguage"), "en")
+            self.assertEqual(conf_payload.get("gender"), "female")
+            self.assertEqual(conf_payload.get("serviceId"), 123)
+            self.assertEqual(
+                json_payload.get("pipelineRequestConfig").get("pipelineId"), "mock_id"
+            )
+            self.assertEqual(
+                json_payload.get("inputData").get("input")[0].get("source"),
+                "Some text",
+            )
+
 
 if __name__ == "__main__":
     main(exit=False)
