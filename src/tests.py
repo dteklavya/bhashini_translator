@@ -24,16 +24,30 @@ class TestTranslation(TestCase):
         with mock.patch("bhashini_translator.pipeline_config.requests") as mock_request:
             mock_request.post.return_value.json.return_value = pl_config
             mock_request.post().status_code = 200
-            json_payload = bhashini.nmt_payload("Some text")
-            payload = json.loads(json_payload).get("pipelineTasks")[0]
+            json_payload = json.loads(bhashini.nmt_payload("Some text"))
+            conf_payload = json_payload.get("pipelineTasks")[0].get("config")
 
             self.assertEqual(
-                payload.get("config").get("serviceId"),
+                conf_payload.get("serviceId"),
                 pl_config.get("pipelineResponseConfig")[0]
                 .get("config")[0]
                 .get("serviceId"),
             )
             self.assertTrue(mock_request.post.called)
+
+            self.assertEqual(
+                json_payload.get("pipelineTasks")[0].get("taskType"), "translation"
+            )
+            self.assertEqual(conf_payload.get("language").get("sourceLanguage"), "en")
+            self.assertEqual(conf_payload.get("language").get("targetLanguage"), "hi")
+
+            self.assertEqual(
+                json_payload.get("pipelineRequestConfig").get("pipelineId"), "mock_id"
+            )
+            self.assertEqual(
+                json_payload.get("inputData").get("input")[0].get("source"),
+                "Some text",
+            )
 
 
 if __name__ == "__main__":
