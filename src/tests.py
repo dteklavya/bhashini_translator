@@ -26,18 +26,17 @@ class TestTranslation(TestCase):
             mock_request.post().status_code = 200
             json_payload = json.loads(bhashini.nmt_payload("Some text"))
             conf_payload = json_payload.get("pipelineTasks")[0].get("config")
+            tasks_payload = json_payload.get("pipelineTasks")[0]
 
+            self.assertTrue(mock_request.post.called)
             self.assertEqual(
                 conf_payload.get("serviceId"),
                 pl_config.get("pipelineResponseConfig")[0]
                 .get("config")[0]
                 .get("serviceId"),
             )
-            self.assertTrue(mock_request.post.called)
 
-            self.assertEqual(
-                json_payload.get("pipelineTasks")[0].get("taskType"), "translation"
-            )
+            self.assertEqual(tasks_payload.get("taskType"), "translation")
             self.assertEqual(conf_payload.get("language").get("sourceLanguage"), "en")
             self.assertEqual(conf_payload.get("language").get("targetLanguage"), "hi")
 
