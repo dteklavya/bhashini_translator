@@ -94,6 +94,22 @@ class TestTranslation(TestCase):
             )
             self.assertEqual(tasks_payload[0].get("config").get("serviceId"), 124)
 
+            self.assertEqual(tasks_payload[1].get("taskType"), "translation")
+            self.assertEqual(
+                tasks_payload[1].get("config").get("language").get("targetLanguage"),
+                "hi",
+            )
+            self.assertEqual(tasks_payload[1].get("config").get("serviceId"), 124)
+
+            self.assertEqual(
+                json_payload.get("pipelineRequestConfig").get("pipelineId"), "mock_id"
+            )
+
+            self.assertEqual(
+                json_payload.get("inputData").get("audio")[0].get("audioContent"),
+                "mock base64 string",
+            )
+
 
 if __name__ == "__main__":
     main(exit=False)
