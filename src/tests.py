@@ -74,6 +74,26 @@ class TestTranslation(TestCase):
                 "Some text",
             )
 
+    def test_asr_nmt_payload(self):
+        bhashini = Bhashini(sourceLanguage="en", targetLanguage="hi")
+        self.assertIsNotNone(bhashini)
+
+        pl_config = {"pipelineResponseConfig": [{"config": [{"serviceId": 124}]}]}
+
+        with mock.patch("bhashini_translator.pipeline_config.requests") as mock_request:
+            mock_request.post.return_value.json.return_value = pl_config
+            mock_request.post().status_code = 200
+            json_payload = json.loads(bhashini.asr_nmt_payload("mock base64 string"))
+            tasks_payload = json_payload.get("pipelineTasks")
+
+            self.assertTrue(mock_request.post.called)
+            self.assertEqual(tasks_payload[0].get("taskType"), "asr")
+            self.assertEqual(
+                tasks_payload[0].get("config").get("language").get("sourceLanguage"),
+                "en",
+            )
+            self.assertEqual(tasks_payload[0].get("config").get("serviceId"), 124)
+
 
 if __name__ == "__main__":
     main(exit=False)
