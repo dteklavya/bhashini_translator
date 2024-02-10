@@ -110,6 +110,35 @@ class TestTranslation(TestCase):
                 "mock base64 string",
             )
 
+    def test_asr_payload(self):
+        bhashini = Bhashini(targetLanguage="hi")
+        self.assertIsNotNone(bhashini)
+
+        pl_config = {"pipelineResponseConfig": [{"config": [{"serviceId": 125}]}]}
+
+        with mock.patch("bhashini_translator.pipeline_config.requests") as mock_request:
+            mock_request.post.return_value.json.return_value = pl_config
+            mock_request.post().status_code = 200
+            json_payload = json.loads(bhashini.asr_payload("mock base64 string"))
+            tasks_payload = json_payload.get("pipelineTasks")
+
+            self.assertTrue(mock_request.post.called)
+
+            self.assertEqual(tasks_payload[0].get("taskType"), "asr")
+            self.assertIsNone(
+                tasks_payload[0].get("config").get("language").get("sourceLanguage")
+            )
+            self.assertEqual(tasks_payload[0].get("config").get("serviceId"), 125)
+
+            self.assertEqual(
+                json_payload.get("pipelineRequestConfig").get("pipelineId"), "mock_id"
+            )
+
+            self.assertEqual(
+                json_payload.get("inputData").get("audio")[0].get("audioContent"),
+                "mock base64 string",
+            )
+
 
 if __name__ == "__main__":
     main(exit=False)
