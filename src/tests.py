@@ -170,6 +170,14 @@ class TestTranslation(TestCase):
             self.assertEqual(tasks_payload[1].get("config").get("serviceId"), 126)
             self.assertEqual(tasks_payload[1].get("config").get("gender"), "female")
 
+            self.assertEqual(
+                json_payload.get("pipelineRequestConfig").get("pipelineId"), "mock_id"
+            )
+            self.assertEqual(
+                json_payload.get("inputData").get("input")[0].get("source"),
+                "mock string",
+            )
+
 
 if __name__ == "__main__":
     main(exit=False)
