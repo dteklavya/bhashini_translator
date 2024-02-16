@@ -139,6 +139,37 @@ class TestTranslation(TestCase):
                 "mock base64 string",
             )
 
+    def test_nmt_tts_payload(self):
+        bhashini = Bhashini(targetLanguage="hi")
+        self.assertIsNotNone(bhashini)
+
+        pl_config = {"pipelineResponseConfig": [{"config": [{"serviceId": 126}]}]}
+
+        with mock.patch("bhashini_translator.pipeline_config.requests") as mock_request:
+            mock_request.post.return_value.json.return_value = pl_config
+            mock_request.post().status_code = 200
+            json_payload = json.loads(bhashini.nmt_tts_payload("mock string"))
+            tasks_payload = json_payload.get("pipelineTasks")
+
+            self.assertTrue(mock_request.post.called)
+
+            self.assertEqual(tasks_payload[0].get("taskType"), "translation")
+            self.assertIsNone(
+                tasks_payload[0].get("config").get("language").get("sourceLanguage")
+            )
+            self.assertEqual(
+                tasks_payload[0].get("config").get("language").get("targetLanguage"),
+                "hi",
+            )
+            self.assertEqual(tasks_payload[0].get("config").get("serviceId"), 126)
+
+            self.assertEqual(tasks_payload[1].get("taskType"), "tts")
+            self.assertIsNone(
+                tasks_payload[1].get("config").get("language").get("targetLanguage")
+            )
+            self.assertEqual(tasks_payload[1].get("config").get("serviceId"), 126)
+            self.assertEqual(tasks_payload[1].get("config").get("gender"), "female")
+
 
 if __name__ == "__main__":
     main(exit=False)
