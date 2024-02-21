@@ -305,6 +305,20 @@ class TestTranslation(TestCase):
                 .get("modelId"),
                 "641d1d6",
             )
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("language")
+                .get("sourceScriptCode"),
+                "Latn",
+            )
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("language")
+                .get("targetScriptCode"),
+                "Deva",
+            )
 
             # Checks for pipelineInferenceAPIEndPoint
             self.assertEqual(
