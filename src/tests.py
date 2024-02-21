@@ -217,6 +217,46 @@ class TestTranslation(TestCase):
                 "mock string",
             )
 
+    def test_translate(self):
+        bhashini = Bhashini(sourceLanguage="en", targetLanguage="hi")
+        self.assertIsNotNone(bhashini)
+
+        pl_config = {
+            "pipelineResponseConfig": [{"config": [{"serviceId": 111}]}],
+            "pipelineInferenceAPIEndPoint": {
+                "callbackUrl": "fake url",
+                "inferenceApiKey": {"value": "fake API Key"},
+            },
+        }
+
+        with mock.patch(
+            "bhashini_translator.pipeline_config.requests"
+        ) as mock_pl_request, mock.patch(
+            "bhashini_translator.bhashini_translator.requests"
+        ) as mock_main:
+            mock_pl_request.post.return_value.json.return_value = pl_config
+            mock_pl_request.post().status_code = 200
+            json_payload = json.loads(bhashini.nmt_payload("Some text"))
+            conf_payload = json_payload.get("pipelineTasks")[0].get("config")
+
+            self.assertTrue(mock_pl_request.post.called)
+
+            self.assertIsNotNone(bhashini.pipeLineData)
+            self.assertIsNotNone(bhashini.pipeLineData)
+            self.assertIsNotNone(bhashini.pipeLineData)
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("serviceId"),
+                111,
+            )
+
+            mock_main.post.return_value.json.return_value = pl_config
+            mock_main.post().status_code = 200
+            response = bhashini.compute_response(json_payload)
+
+            self.assertTrue(mock_main.post.called)
+
 
 if __name__ == "__main__":
     main(exit=False)
