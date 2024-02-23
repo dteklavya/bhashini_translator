@@ -418,6 +418,11 @@ class TestTranslation(TestCase):
                 .get("modelId"),
                 "641d1d6",
             )
+            self.assertIsNotNone(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("supportedVoices")
+            )
 
             # Checks for pipelineInferenceAPIEndPoint
             self.assertEqual(
