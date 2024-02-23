@@ -29,6 +29,7 @@ class TestTranslation(TestCase):
             tasks_payload = json_payload.get("pipelineTasks")[0]
 
             self.assertTrue(mock_request.post.called)
+
             self.assertEqual(
                 conf_payload.get("serviceId"),
                 pl_config.get("pipelineResponseConfig")[0]
@@ -269,7 +270,6 @@ class TestTranslation(TestCase):
             mock_pl_request.post.return_value.json.return_value = pl_config
             mock_pl_request.post().status_code = 200
             json_payload = json.loads(bhashini.nmt_payload("Some text"))
-            conf_payload = json_payload.get("pipelineTasks")[0].get("config")
 
             self.assertTrue(mock_pl_request.post.called)
 
