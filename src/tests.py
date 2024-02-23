@@ -382,7 +382,7 @@ class TestTranslation(TestCase):
         ) as mock_main:
             mock_pl_request.post.return_value.json.return_value = pl_config
             mock_pl_request.post().status_code = 200
-            json_payload = json.loads(bhashini.nmt_payload("Some text"))
+            json_payload = json.loads(bhashini.tts_payload("Some text"))
 
             self.assertTrue(mock_pl_request.post.called)
 
