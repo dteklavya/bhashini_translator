@@ -387,6 +387,49 @@ class TestTranslation(TestCase):
             self.assertTrue(mock_pl_request.post.called)
 
             self.assertIsNotNone(bhashini.pipeLineData)
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("serviceId"),
+                "ai4bharat/indictrans-v2",
+            )
+
+            mock_main.post.return_value.json.return_value = pl_config
+            mock_main.post().status_code = 200
+            response = bhashini.compute_response(json_payload)
+
+            self.assertTrue(mock_main.post.called)
+
+            self.assertEqual(response.get("languages")[0].get("sourceLanguage"), "en")
+            self.assertEqual(
+                response.get("languages")[0].get("targetLanguageList")[0], "hi"
+            )
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("serviceId"),
+                response.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("serviceId"),
+            )
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("modelId"),
+                "641d1d6",
+            )
+
+            # Checks for pipelineInferenceAPIEndPoint
+            self.assertEqual(
+                response.get("pipelineInferenceAPIEndPoint").get("callbackUrl"),
+                "https://google.com/services/inference/pipeline",
+            )
+            self.assertEqual(
+                response.get("pipelineInferenceAPIEndPoint")
+                .get("inferenceApiKey")
+                .get("value"),
+                "J|*wM4/ycjXv",
+            )
 
 
 if __name__ == "__main__":
