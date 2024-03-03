@@ -748,6 +748,109 @@ class TestTranslation(TestCase):
                 "J|*wM4/ycjXv",
             )
 
+    def test_asr_nmt_tts(self):
+        bhashini = Bhashini(sourceLanguage="en", targetLanguage="hi")
+        self.assertIsNotNone(bhashini)
+
+        pl_config = {
+            "languages": [{"sourceLanguage": "en", "targetLanguageList": ["hi"]}],
+            "pipelineResponseConfig": [
+                {
+                    "taskType": "tts",
+                    "config": [
+                        {
+                            "serviceId": "ai4bharat/indictrans-v2",
+                            "modelId": "641d1d6",
+                            "language": {
+                                "sourceLanguage": "en",
+                                "targetLanguage": "hi",
+                            },
+                            "supportedVoices": ["male", "female"],
+                        }
+                    ],
+                }
+            ],
+            "feedbackUrl": "https://google.com/services/feedback/submit",
+            "pipelineInferenceAPIEndPoint": {
+                "callbackUrl": "https://google.com/services/inference/pipeline",
+                "inferenceApiKey": {
+                    "name": "Authorization",
+                    "value": "J|*wM4/ycjXv",
+                },
+                "isMultilingualEnabled": True,
+                "isSyncApi": True,
+            },
+            "pipelineInferenceSocketEndPoint": {
+                "callbackUrl": "wss://dhruva-api.bhashini.gov.in",
+                "inferenceApiKey": {
+                    "name": "Authorization",
+                    "value": "J|*wM4/ycjXv",
+                },
+                "isMultilingualEnabled": True,
+                "isSyncApi": True,
+            },
+        }
+
+        with mock.patch(
+            "bhashini_translator.pipeline_config.requests"
+        ) as mock_pl_request, mock.patch(
+            "bhashini_translator.bhashini_translator.requests"
+        ) as mock_main:
+            mock_pl_request.post.return_value.json.return_value = pl_config
+            mock_pl_request.post().status_code = 200
+            asr_payload = json.loads(bhashini.asr_nmt_tts_payload("mock string"))
+
+            self.assertTrue(mock_pl_request.post.called)
+
+            self.assertIsNotNone(bhashini.pipeLineData)
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("serviceId"),
+                "ai4bharat/indictrans-v2",
+            )
+
+            mock_main.post.return_value.json.return_value = pl_config
+            mock_main.post().status_code = 200
+            response = bhashini.compute_response(asr_payload)
+
+            self.assertTrue(mock_main.post.called)
+
+            self.assertEqual(response.get("languages")[0].get("sourceLanguage"), "en")
+            self.assertEqual(
+                response.get("languages")[0].get("targetLanguageList")[0], "hi"
+            )
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("serviceId"),
+                response.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("serviceId"),
+            )
+            self.assertEqual(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("modelId"),
+                "641d1d6",
+            )
+            self.assertIsNotNone(
+                bhashini.pipeLineData.get("pipelineResponseConfig")[0]
+                .get("config")[0]
+                .get("supportedVoices")
+            )
+
+            self.assertEqual(
+                response.get("pipelineInferenceAPIEndPoint").get("callbackUrl"),
+                "https://google.com/services/inference/pipeline",
+            )
+            self.assertEqual(
+                response.get("pipelineInferenceAPIEndPoint")
+                .get("inferenceApiKey")
+                .get("value"),
+                "J|*wM4/ycjXv",
+            )
+
 
 if __name__ == "__main__":
     main(exit=False)
